@@ -2,7 +2,7 @@ package com.example.freelanceproject.ui
 
 import ProjectViewModel
 import android.R.attr.onClick
-import android.graphics.Color
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,14 +32,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.freelanceproject.data.local.entities.Project
+import com.example.freelanceproject.data.local.entities.ProjectStatus
+import com.example.freelanceproject.data.repository.ProjectRepository
+import com.example.freelanceproject.ui.theme.FreelanceProjectTheme
 import kotlin.collections.emptyList
 
 @Composable
 fun ProjectListScreen(
     viewModel: ProjectViewModel
 ) {
+    var selectedProject by remember{ mutableStateOf<Project?>(null) }
+    var showSheet by remember{mutableStateOf(false)}
+
+
     // Collecting the list of projects from the Flow we built in the Repository
     val projects by viewModel.projects.collectAsState(initial = emptyList())
 
@@ -54,7 +62,10 @@ fun ProjectListScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(projects) { project ->
-                ProjectItem(project = project)
+                ProjectItem(project = project, onClick = {
+                    selectedProject = project
+                    showSheet = true
+                })
             }
         }
     }
@@ -68,16 +79,7 @@ fun ProjectItem(project: Project, onClick: () -> Unit){
             .fillMaxWidth()
             .clickable { onClick() },
         ) {
-        var selectedProject by remember{ mutableStateOf<Project?>(null) }
-        var showSheet by remember{mutableStateOf(false)}
 
-        ProjectItem(
-            project=project,
-            onClick={
-                selectedProject=project
-                showSheet=true
-            }
-        )
         Column(
             modifier = Modifier.padding(16.dp),
         ) {
@@ -90,7 +92,7 @@ fun ProjectItem(project: Project, onClick: () -> Unit){
                 ) {
                     Text(text = project.title, style = MaterialTheme.typography.titleMedium)
                     Text(
-                        text = "Client ID: ${project.clientId ?: "Unassigned"}",
+                        text = "Client ID: ${project.clientID ?: "Unassigned"}",
                         color = Color.Gray,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -100,7 +102,7 @@ fun ProjectItem(project: Project, onClick: () -> Unit){
             Spacer(modifier = Modifier.height(8.dp))
 
             val progress = if (project.targetAmount > 0) {
-                project.paidAmount / project.targetAmount
+                (project.paidAmount / project.targetAmount).toFloat()
             } else {
                 0f
             }
@@ -146,3 +148,5 @@ fun AddMoneySheet(
         }
     }
 }
+
+

@@ -1,7 +1,9 @@
 package com.example.freelanceproject.data.local.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.freelanceproject.data.model.ProjectType
-import java.sql.Date
+import java.util.Date
 
 @Entity(tableName="projects")
 data class Project(
@@ -9,14 +11,14 @@ data class Project(
     val id: Int = 0,
     val title: String,
     val projectType: ProjectType,
-    val description: String,
-    val clientID: Int,
+    val description: String?,
+    val clientID: Int?,
     val targetAmount: Double,
     val paidAmount: Double,
-    val totalHours: Double=0.0,
+    val totalHours: Double?,
     val isCompleted: Boolean,
-    val startDate: Date,
-    val endDate: Date,
+    val startDate: Date?,
+    val endDate: Date?,
     val status: ProjectStatus = ProjectStatus.PLANNING
 )
 enum class ProjectStatus{

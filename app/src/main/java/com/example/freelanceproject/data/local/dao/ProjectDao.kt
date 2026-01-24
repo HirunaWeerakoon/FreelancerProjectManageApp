@@ -1,5 +1,7 @@
 package com.example.freelanceproject.data.local.dao
 
+import androidx.room.*
+
 import com.example.freelanceproject.data.local.entities.Project
 import kotlinx.coroutines.flow.Flow
 
@@ -17,8 +19,6 @@ interface ProjectDao {
     @Query("SELECT * FROM projects")
     fun getAllProjects(): Flow<List<Project>>
 
-    @Query("SELECT * FROM projects WHERE clientId = :clientId")
-    fun getProjectById(Clientid: Int): Flow<List<Project>>
 }
 
 

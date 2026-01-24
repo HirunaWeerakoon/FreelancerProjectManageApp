@@ -1,5 +1,6 @@
 package com.example.freelanceproject.data.local.dao
 
+import androidx.room.*
 import com.example.freelanceproject.data.local.entities.Client
 import kotlinx.coroutines.flow.Flow
 
