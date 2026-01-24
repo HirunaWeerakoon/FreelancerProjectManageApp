@@ -17,5 +17,10 @@ data class Project(
     val isCompleted: Boolean,
     val startDate: Date,
     val endDate: Date,
-    val status: String
+    val status: ProjectStatus = ProjectStatus.PLANNING
 )
+enum class ProjectStatus{
+    PLANNING,
+    ACTIVE,
+    COMPLETED
+}
