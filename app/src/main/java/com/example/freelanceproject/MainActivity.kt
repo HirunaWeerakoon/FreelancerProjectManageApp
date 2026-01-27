@@ -11,37 +11,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.freelanceproject.data.local.FreelanceDatabase
+import com.example.freelanceproject.data.repository.ProjectRepository
 import com.example.freelanceproject.ui.theme.FreelanceProjectTheme
+import com.example.freelanceproject.ui.AppNavigation
+import androidx.lifecycle.ViewModelProvider
+import com.example.freelanceproject.ViewModel.ProjectViewModel
+import com.example.freelanceproject.ViewModel.ProjectViewModelFactory
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val database = FreelanceDatabase.getDatabase(this)
+
+        val repository = ProjectRepository(database.projectDao)
+
+        val factory = ProjectViewModelFactory(repository)
+        val viewModel = ViewModelProvider(this, factory)[ProjectViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             FreelanceProjectTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppNavigation(viewModel = viewModel)
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FreelanceProjectTheme {
-        Greeting("Android")
-    }
-}

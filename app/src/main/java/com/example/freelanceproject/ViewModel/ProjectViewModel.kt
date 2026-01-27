@@ -1,3 +1,5 @@
+package com.example.freelanceproject.ViewModel
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.freelanceproject.data.local.entities.Project
@@ -30,6 +32,29 @@ class ProjectViewModel(private val repository: ProjectRepository) : ViewModel() 
     fun deleteProject(project: Project){
         viewModelScope.launch {
             repository.delete(project)
+        }
+    }
+    // In ProjectViewModel.kt
+    fun toggleTimer(project: Project) {
+        viewModelScope.launch {
+            if (project.timerStartTime == null) {
+                // START: Save current timestamp
+                val updatedProject = project.copy(timerStartTime = System.currentTimeMillis())
+                repository.update(updatedProject)
+            } else {
+                // STOP: Calculate difference and add to totalHours
+                val currentTime = System.currentTimeMillis()
+                val timeElapsedMs = currentTime - project.timerStartTime
+
+                // Convert Ms to Hours (Decimal)
+                val hoursToAdd = timeElapsedMs / (1000.0 * 60 * 60)
+
+                val updatedProject = project.copy(
+                    timerStartTime = null, // Reset active timer
+                    totalHours = (project.totalHours ?: 0.0) + hoursToAdd
+                )
+                repository.update(updatedProject)
+            }
         }
     }
 

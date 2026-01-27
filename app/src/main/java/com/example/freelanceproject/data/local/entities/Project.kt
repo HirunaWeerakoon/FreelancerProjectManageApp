@@ -12,14 +12,16 @@ data class Project(
     val title: String,
     val projectType: ProjectType,
     val description: String?,
-    val clientID: Int?,
+    val clientID: String?,
     val targetAmount: Double,
     val paidAmount: Double,
     val totalHours: Double?,
     val isCompleted: Boolean,
-    val startDate: Date?,
+    val startDate: Date,
     val endDate: Date?,
-    val status: ProjectStatus = ProjectStatus.PLANNING
+    val status: ProjectStatus = ProjectStatus.PLANNING,
+    val timerStartTime: Long? = null
+
 )
 enum class ProjectStatus{
     PLANNING,

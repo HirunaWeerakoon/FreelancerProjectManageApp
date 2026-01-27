@@ -8,13 +8,6 @@ class ProjectRepository ( private val projectDao: ProjectDao) {
 
     val allProjects: Flow<List<Project>> = projectDao.getAllProjects()
 
-    fun getAllProjects(): Flow<List<Project>> {
-        return projectDao.getAllProjects()
-    }
-
-    fun getProjectById(id: Int): Flow<List<Project>> {
-        return projectDao.getProjectById(id)
-    }
 
     suspend fun insert(project: Project) {
         projectDao.insertProject(project)
