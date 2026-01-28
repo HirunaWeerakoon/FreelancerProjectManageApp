@@ -14,7 +14,6 @@ fun AppNavigation(
 
     // The "startDestination" tells the app which screen to show first
     NavHost(navController = navController, startDestination = "project_list") {
-
         // SCREEN 1: The Project Dashboard
         composable("project_list") {
             ProjectListScreen(
@@ -31,6 +30,15 @@ fun AppNavigation(
             TimerScreen(
                 viewModel = viewModel
             )
+        }
+        // 3. Client List Stub
+        composable("client_list") {
+            ClientListScreen()
+        }
+
+        // 4. Stats Stub
+        composable("stats_screen") {
+            StatsScreen()
         }
     }
 }
