@@ -16,18 +16,22 @@ import kotlinx.coroutines.delay
 fun TimerScreen(
     viewModel: ProjectViewModel
 ) {
-    // 1. Get all projects for the Dropdown
+    // 1. Get all projects
     val projects by viewModel.projects.collectAsState(initial = emptyList())
 
-    // 2. State for the Dropdown
+    // 2. State for the locked project ID (not the object itself, to avoid stale state)
+    var selectedProjectId by remember { mutableStateOf<Int?>(null) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedProject by remember { mutableStateOf<Project?>(null) }
 
-    // 3. Auto-select the first running project (if any) when screen opens
+    // 3. Derive the ACTUAL selected project from the live list
+    val selectedProject = projects.find { it.id == selectedProjectId } ?: projects.firstOrNull { it.timerStartTime != null }
+    
+    // Auto-select helper: if nothing selected, select the first active one or just keep null
     LaunchedEffect(projects) {
-        if (selectedProject == null) {
-            selectedProject = projects.find { it.timerStartTime != null } ?: projects.firstOrNull()
-        }
+       if (selectedProjectId == null) {
+           val active = projects.find { it.timerStartTime != null }
+           if (active != null) selectedProjectId = active.id
+       }
     }
 
     Column(
@@ -54,7 +58,7 @@ fun TimerScreen(
                     DropdownMenuItem(
                         text = { Text(project.title) },
                         onClick = {
-                            selectedProject = project
+                            selectedProjectId = project.id
                             isDropdownExpanded = false
                         }
                     )
@@ -65,14 +69,10 @@ fun TimerScreen(
         Spacer(modifier = Modifier.height(48.dp))
 
         // timer
-        // If a project is selected, show its timer
         if (selectedProject != null) {
-            val project = selectedProject!! // Force unwrap since we checked null
-
-            // This composable handles the "Ticking" logic separate from the database
             ActiveTimerDisplay(
-                project = project,
-                onToggleTimer = { viewModel.toggleTimer(it) } // You need to add this to VM
+                project = selectedProject,
+                onToggleTimer = { viewModel.toggleTimer(it) }
             )
         } else {
             Text("Please create a project first")
@@ -92,7 +92,7 @@ fun ActiveTimerDisplay(
     LaunchedEffect(project.timerStartTime) {
         if (project.timerStartTime != null) {
             while (true) {
-                val timeDiff = System.currentTimeMillis() - project.timerStartTime
+                val timeDiff = System.currentTimeMillis() - (project.timerStartTime ?: System.currentTimeMillis())
                 elapsedSeconds = timeDiff / 1000
                 delay(1000) // Wait 1 second
             }
@@ -112,7 +112,7 @@ fun ActiveTimerDisplay(
     Spacer(modifier = Modifier.height(24.dp))
 
     // Total accumulated history
-    Text(text = "Previous Total: ${"%.1f".format(project.totalHours)} hrs", color = MaterialTheme.colorScheme.secondary)
+    Text(text = "Previous Total: ${"%.1f".format(project.totalHours ?: 0.0)} hrs", color = MaterialTheme.colorScheme.secondary)
 
     Spacer(modifier = Modifier.height(32.dp))
 

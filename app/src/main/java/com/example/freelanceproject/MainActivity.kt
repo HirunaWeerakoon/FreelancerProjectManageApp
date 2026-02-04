@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.freelanceproject.data.local.FreelanceDatabase
 import com.example.freelanceproject.data.repository.ProjectRepository
+import com.example.freelanceproject.data.repository.ClientRepository
 import com.example.freelanceproject.ui.theme.FreelanceProjectTheme
 import com.example.freelanceproject.ui.AppNavigation
 import androidx.lifecycle.ViewModelProvider
@@ -26,8 +27,9 @@ class MainActivity : ComponentActivity() {
         val database = FreelanceDatabase.getDatabase(this)
 
         val repository = ProjectRepository(database.projectDao)
+        val clientRepository = ClientRepository(database.clientDao)
 
-        val factory = ProjectViewModelFactory(repository)
+        val factory = ProjectViewModelFactory(repository, clientRepository)
         val viewModel = ViewModelProvider(this, factory)[ProjectViewModel::class.java]
         enableEdgeToEdge()
         setContent {

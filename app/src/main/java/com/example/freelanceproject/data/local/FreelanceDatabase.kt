@@ -11,7 +11,7 @@ import com.example.freelanceproject.data.local.entities.Client
 import com.example.freelanceproject.data.local.entities.Project
 
 @Database(entities = [Project::class, Client::class],version = 2,exportSchema = false)
-
+@TypeConverters(ProjectConverters::class)
 abstract class FreelanceDatabase: RoomDatabase() {
     abstract val clientDao: ClientDao
     abstract val projectDao: ProjectDao
@@ -26,7 +26,9 @@ abstract class FreelanceDatabase: RoomDatabase() {
                     context.applicationContext,
                     FreelanceDatabase::class.java,
                     "freelance_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }
